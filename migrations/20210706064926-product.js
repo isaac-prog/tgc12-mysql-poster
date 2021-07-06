@@ -14,12 +14,18 @@ exports.setup = function(options, seedLink) {
   seed = seedLink;
 };
 
+// define product table
 exports.up = function(db) {
-  return null;
+  return db.createTable('products',{
+    id: { type: 'int', primaryKey:true, autoIncrement:true},
+    name: { type: 'string', length:100, notNull:false},
+    cost: 'int',
+    description:'text'
+})
 };
 
 exports.down = function(db) {
-  return null;
+  return db.dropTable('products');
 };
 
 exports._meta = {
