@@ -17,6 +17,34 @@ const createLoginForm = () => {
     })
 }
 
+const createProductForm = () => {
+    return forms.create({
+        'name': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            'validators':[validators.integer()]
+        }),
+        
+        'cost': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'description': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+    })
+};
+
 module.exports = { createProductForm, 
     createRegistrationForm,
     createLoginForm, 
