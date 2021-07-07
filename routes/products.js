@@ -44,7 +44,7 @@ router.post('/create', async(req,res)=>{
     })
 })
 
-// router to update the form
+// Updating the form
 // this router is the get the infromation that is to be updated
 router.get('/:product_id/update', async (req, res) => {
     // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
@@ -106,8 +106,33 @@ router.post('/:product_id/update', async (req, res) => {
 
 })
 
+// Deleting a form
+router.get('/:product_id/delete', async(req,res)=>{
+    // fetch the product that we want to delete
+    const product = await Product.where({
+        'id': req.params.product_id
+    }).fetch({
+        require: true
+    });
 
+    res.render('products/delete', {
+        'product': product.toJSON()
+    })
 
+});
+
+// process delete:
+router.post('/:product_id/delete', async(req,res)=>{
+    // fetch the product that we want to delete
+    const product = await Product.where({
+        'id': req.params.product_id
+    }).fetch({
+        require: true
+    });
+    // destroy function basically just destroys that product that we fetch above
+    await product.destroy();
+    res.redirect('/products')
+})
 
 module.exports = router;
 
