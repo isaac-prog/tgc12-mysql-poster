@@ -1,5 +1,5 @@
 Arguments: 
-  /home/gitpod/.nvm/versions/node/v14.15.4/bin/node /home/gitpod/.nvm/versions/node/v14.15.4/bin/yarn add knwx
+  /home/gitpod/.nvm/versions/node/v14.15.4/bin/node /home/gitpod/.nvm/versions/node/v14.15.4/bin/yarn add dotenv. yarn add wax-on
 
 PATH: 
   /home/gitpod/.sdkman/candidates/maven/current/bin:/home/gitpod/.sdkman/candidates/java/current/bin:/home/gitpod/.sdkman/candidates/gradle/current/bin:/home/gitpod/.rvm/gems/ruby-2.7.3/bin:/home/gitpod/.rvm/gems/ruby-2.7.3@global/bin:/home/gitpod/.rvm/rubies/ruby-2.7.3/bin:/home/gitpod/.pyenv/plugins/pyenv-virtualenv/shims:/workspace/.cargo/bin:/workspace/.pip-modules/bin:/workspace/.rvm/bin:/ide/bin:/usr/lib/postgresql/12/bin:/home/gitpod/.nvm/versions/node/v14.15.4/bin:/home/gitpod/.pg_ctl/bin:/home/gitpod/.pyenv/bin:/home/gitpod/.pyenv/shims:/workspace/go/bin:/home/gitpod/go/bin:/home/gitpod/go-packages/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin/:/home/gitpod/.nvm/versions/node/v14.17.0/bin:/home/gitpod/.cargo/bin:/usr/games:/usr/games:/home/gitpod/.nvm/versions/node/v14.17.0/bin:/home/gitpod/.rvm/bin
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/knwx: Not found
+  Error: https://registry.yarnpkg.com/dotenv.: Not found
       at Request.params.callback [as _callback] (/home/gitpod/.nvm/versions/node/v14.15.4/lib/node_modules/yarn/lib/cli.js:66988:18)
       at Request.self.callback (/home/gitpod/.nvm/versions/node/v14.15.4/lib/node_modules/yarn/lib/cli.js:140662:22)
       at Request.emit (events.js:315:20)
