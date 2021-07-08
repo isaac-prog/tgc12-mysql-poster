@@ -75,7 +75,7 @@ router.post('/create', async(req,res)=>{
 
 // Updating the form
 // this router is the get the infromation that is to be updated
-router.get('/:product_id/update', async (req, res) => {
+router.get('/products/:product_id/update', async (req, res) => {
     // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
     const productId = req.params.product_id
     const product = await Product.where({
@@ -126,7 +126,7 @@ router.get('/:product_id/update', async (req, res) => {
 // this router is to push the updated information into the database
 
 // we fetch the product by the product id from the URL parameters
-router.post('/:product_id/update', async (req, res) => {
+router.post('/products/:product_id/update', async (req, res) => {
     // fetch all the categories
     const allCategories = await Category.fetchAll().map((category)=>{
         return [category.get('id'), category.get('name')];

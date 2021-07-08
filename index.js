@@ -24,11 +24,11 @@ app.use(
 );
 
 // import landing page
-const landingRoutes = require('./routes/landing');
+const productRoutes = require('./routes/products');
 
 async function main() {
     // landing page route
-    app.use('/', landingRoutes);
+    app.use('/', productRoutes);
 }
 
 main();

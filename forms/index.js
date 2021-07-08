@@ -17,33 +17,33 @@ const createLoginForm = () => {
     })
 }
 
-const createProductForm = () => {
-    return forms.create({
-        'name': fields.string({
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            },
-            'validators':[validators.integer()]
-        }),
+// const createProductForm = () => {
+//     return forms.create({
+//         'name': fields.string({
+//             required: true,
+//             errorAfterField: true,
+//             cssClasses: {
+//                 label: ['form-label']
+//             },
+//             'validators':[validators.integer()]
+//         }),
         
-        'cost': fields.string({
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            }
-        }),
-        'description': fields.string({
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            }
-        }),
-    })
-};
+//         'cost': fields.string({
+//             required: true,
+//             errorAfterField: true,
+//             cssClasses: {
+//                 label: ['form-label']
+//             }
+//         }),
+//         'description': fields.string({
+//             required: true,
+//             errorAfterField: true,
+//             cssClasses: {
+//                 label: ['form-label']
+//             }
+//         }),
+//     })
+// };
 
 const createProductForm = (categories) => {
     return forms.create({
@@ -93,7 +93,7 @@ const createProductForm = (categories) => {
 
 
 
-module.exports = { createProductForm, 
-    createRegistrationForm,
-    createLoginForm, 
-    bootstrapField };
+// module.exports = { createProductForm, 
+    // createRegistrationForm,
+    // createLoginForm, 
+    // bootstrapField };
