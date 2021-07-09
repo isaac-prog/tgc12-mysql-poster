@@ -7,6 +7,10 @@ const { bootstrapField, createProductForm } = require('../forms');
 
 // #1 import in the Product model from models
 const {Product} = require('../models')
+// 
+const {Category}=require('../models')
+
+const {Tag} = require('../models')
 
 router.get('/', async (req,res)=>{
 
@@ -21,10 +25,18 @@ router.get('/', async (req,res)=>{
 })
 
 router.get('/create', async (req, res) => {
-    const productForm = createProductForm();
-    res.render('products/create',{
-        'form': productForm.toHTML(bootstrapField)
-    })
+
+    const allCategories = await Category.fetchAll().map((category)=>{
+       return [category.get('id'), category.get('name')];
+   })
+
+   const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
+
+   const productForm = createProductForm(allCategories, allTags);
+  
+   res.render('products/create', {
+       'form': productForm.toHTML(bootstrapField)
+   })
 })
 
 router.post('/create', async(req,res)=>{
@@ -37,8 +49,7 @@ router.post('/create', async(req,res)=>{
     //  reads in all the tags from the table and for each tag, store their id and name in an array. 
     // All the tags are then passed to the createProductForm function.
 
-    const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
-
+    
     const productForm = createProductForm(allCategories,allTags);
     productForm.handle(req, {
         'success': async (form) => {
@@ -94,7 +105,7 @@ router.get('/products/:product_id/update', async (req, res) => {
     // displaying all the possible tags in the form
     const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
 
-    const productForm = createProductForm(allCategories,allTags);
+    const productForm = createProductForm(allCategories, allTags);
 
     // fill in the existing values: 
     // we once again create a productForm. 
@@ -165,7 +176,7 @@ router.post('/products/:product_id/update', async (req, res) => {
             // add in all the tags selected in the form
             await product.tags().attach(tagIds);
 
-            res.redirect('/products');
+            res.redirect('/');
         },
         'error': async (form) => {
             res.render('products/update', {
