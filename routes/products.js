@@ -147,8 +147,10 @@ router.post('/products/:product_id/update', async (req, res) => {
     const product = await Product.where({
         'id': req.params.product_id
     }).fetch({
-        require: true
+        require: true,
+        withRelated:['tags']
     });
+    // console.log(product);
 
     // process the form:
     // If the form is successfully processed (i.e, no validation errors) and we use the product.
@@ -161,7 +163,7 @@ router.post('/products/:product_id/update', async (req, res) => {
         'success': async (form) => {
             //  retrieves the selected tags and the product data from the form
             let { tags, ...productData} = form.data;
-            product.set(form.data);
+            product.set(productData);
             product.save();
 
             // First, it goes through all the existing tags in the product and removes those not in the selected tags.
@@ -172,7 +174,6 @@ router.post('/products/:product_id/update', async (req, res) => {
             // remove all the tags that aren't selected anymore
             let toRemove = existingTagIds.filter( id => tagIds.includes(id) === false);
             await product.tags().detach(toRemove);
-
             // add in all the tags selected in the form
             await product.tags().attach(tagIds);
 
@@ -185,7 +186,6 @@ router.post('/products/:product_id/update', async (req, res) => {
             })
         }
     })
-
 })
 
 // Deleting a form
