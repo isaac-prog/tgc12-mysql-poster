@@ -24,7 +24,8 @@ router.get('/', async (req,res)=>{
     })
 })
 
-router.get('/create', async (req, res) => {
+// create new content
+router.get('/products/create', async (req, res) => {
 
     const allCategories = await Category.fetchAll().map((category)=>{
        return [category.get('id'), category.get('name')];
@@ -39,7 +40,7 @@ router.get('/create', async (req, res) => {
    })
 })
 
-router.post('/create', async(req,res)=>{
+router.post('/products/create', async(req,res)=>{
 
      // 1. Read in all the categories
      const allCategories = await Category.fetchAll().map((category) => {
@@ -188,7 +189,7 @@ router.post('/products/:product_id/update', async (req, res) => {
 })
 
 // Deleting a form
-router.get('products/:product_id/delete', async(req,res)=>{
+router.get('/products/:product_id/delete', async(req,res)=>{
     // fetch the product that we want to delete
     const product = await Product.where({
         'id': req.params.product_id
@@ -201,7 +202,7 @@ router.get('products/:product_id/delete', async(req,res)=>{
 });
 
 // process delete:
-router.post('products/:product_id/delete', async(req,res)=>{
+router.post('/products/:product_id/delete', async(req,res)=>{
     // fetch the product that we want to delete
     const product = await Product.where({
         'id': req.params.product_id
