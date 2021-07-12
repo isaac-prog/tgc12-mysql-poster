@@ -1,6 +1,8 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
+const session = require('express-session');
+const flash = require('connect-flash');
 require("dotenv").config();
 
 // create an instance of express app
@@ -25,6 +27,22 @@ app.use(
 
 // import landing page
 const productRoutes = require('./routes/products');
+
+// set up sessions
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
+
+app.use(flash())
+
+// Register Flash middleware
+app.use(function (req, res, next) {
+    res.locals.success_messages = req.flash("success_messages");
+    res.locals.error_messages = req.flash("error_messages");
+    next();
+});
 
 async function main() {
     // landing page route

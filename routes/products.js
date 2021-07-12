@@ -75,6 +75,10 @@ router.post('/products/create', async(req,res)=>{
             if (tags) {
                 await product.tags().attach(tags.split(","));
             }
+
+            // flash message appears after task is done
+            req.flash("success_messages", `New Product ${product.get('name')} has been created`)
+
             res.redirect('/');
 
         },
@@ -82,6 +86,8 @@ router.post('/products/create', async(req,res)=>{
             res.render('products/create', {
                 'form': form.toHTML(bootstrapField)
             })
+            // flash message appears after task is done
+            res.flash('error_messages', 'Error creating the product')
         }
     })
 })
@@ -177,6 +183,9 @@ router.post('/products/:product_id/update', async (req, res) => {
             // add in all the tags selected in the form
             await product.tags().attach(tagIds);
 
+            // flash message appears after task is done
+            req.flash("success_messages", ` ${product.get('name')} has been updated`)
+            
             res.redirect('/');
         },
         'error': async (form) => {
@@ -184,6 +193,8 @@ router.post('/products/:product_id/update', async (req, res) => {
                 'form': form.toHTML(bootstrapField),
                 'product': product.toJSON()
             })
+            // flash message appears after task is done
+            req.flash("error_messages", `Product ${product.get('name')} encountered an error while updating`)
         }
     })
 })
@@ -196,6 +207,7 @@ router.get('/products/:product_id/delete', async(req,res)=>{
     }).fetch({
         require: true
     });
+    
     res.render('products/delete', {
         'product': product.toJSON()
     })
@@ -209,8 +221,10 @@ router.post('/products/:product_id/delete', async(req,res)=>{
     }).fetch({
         require: true
     });
+    req.flash("success_messages", `Product ${product.get('name')} has been deleted`)
     // destroy function basically just destroys that product that we fetch above
     await product.destroy();
+    // flash message appears after task is done
     res.redirect('/')
 })
 
