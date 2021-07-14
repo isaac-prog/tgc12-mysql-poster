@@ -7,10 +7,12 @@ const { bootstrapField, createProductForm } = require('../forms');
 
 // #1 import in the Product model from models
 const {Product} = require('../models')
-// 
+// import category (this is the grouping for the products)
 const {Category}=require('../models')
-
+// import tags (for filter)
 const {Tag} = require('../models')
+// import in the CheckIfAuthenticated middleware
+const { checkIfAuthenticated } = require('../middlewares');
 
 router.get('/products/index', async (req,res)=>{
 
@@ -25,7 +27,8 @@ router.get('/products/index', async (req,res)=>{
 })
 
 // create new content
-router.get('/products/create', async (req, res) => {
+// before the route is accessed, the checkIfAuthenticated middleware will be executed.
+router.get('/products/create', checkIfAuthenticated, async (req, res) => {
 
     const allCategories = await Category.fetchAll().map((category)=>{
        return [category.get('id'), category.get('name')];
@@ -34,13 +37,18 @@ router.get('/products/create', async (req, res) => {
    const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
 
    const productForm = createProductForm(allCategories, allTags);
-  
-   res.render('products/create', {
-       'form': productForm.toHTML(bootstrapField)
-   })
+
+//    create have access to bootstrap and cloudinary
+      res.render('products/create', {
+        'form': productForm.toHTML(bootstrapField),
+        cloudinaryName: process.env.CLOUDINARY_NAME,
+        cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+        cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
+    })
 })
 
-router.post('/products/create', async(req,res)=>{
+// before the route is accessed, the checkIfAuthenticated middleware will be executed.
+router.post('/products/create',checkIfAuthenticated, async(req,res)=>{
 
      // 1. Read in all the categories
      const allCategories = await Category.fetchAll().map((category) => {
@@ -127,6 +135,9 @@ router.get('/products/:product_id/update', async (req, res) => {
     // When the form is displayed, the correct category will be selected by default.
     productForm.fields.category_id.value = product.get('category_id');
 
+    // set the image url in the product form
+     productForm.fields.image_url.value = product.get('image_url');
+
     // fill in the multi-select for the tags
     // read the current tags of the product and set them as the value of the tags field of the form.
     // This will set the default values of the tags multi-select to the current tags of the product.
@@ -136,7 +147,11 @@ router.get('/products/:product_id/update', async (req, res) => {
 
     res.render('products/update', {
         'form': productForm.toHTML(bootstrapField),
-        'product': product.toJSON()
+        'product': product.toJSON(),
+        // send to the HBS file the cloudinary information
+        cloudinaryName: process.env.CLOUDINARY_NAME,
+        cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+        cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
     })
 })
 

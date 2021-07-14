@@ -5,8 +5,20 @@ const session = require('express-session');
 const flash = require('connect-flash');
 require("dotenv").config();
 
+// import landing page
+const productRoutes = require('./routes/products');
+const usersRegister = require('./routes/users')
+
+const FileStore = require('session-file-store')(session);
+
+// import csurf (this is to prevent csrx attacks)
+const csrf = require('csurf')
+
 // create an instance of express app
 let app = express();
+
+// import cloudinary
+const cloudinaryRoutes = require('./routes/cloudinary.js')
 
 // set the view engine
 app.set("view engine", "hbs");
@@ -25,15 +37,14 @@ app.use(
   })
 );
 
-// import landing page
-const productRoutes = require('./routes/products');
-
 // set up sessions
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-}))
+  'store': new FileStore(),
+  'secret': "keyboard cat",
+  'resave': false, // we will not resave the session if there are no changes
+  'saveUninitialized': true // if a client connects with no session, immediately create one
+}));
+
 
 app.use(flash())
 
@@ -44,10 +55,40 @@ app.use(function (req, res, next) {
     next();
 });
 
+// Share the user data with hbs files (this is global middleware)
+app.use(function(req,res,next){
+  res.locals.user = req.session.user;
+  next();
+})
+
+// enable CSRF
+app.use(csrf());
+
+// !!!###this must be immediately after the app.use(csrf()).###!!!
+app.use(function (err, req, res, next) {
+  if (err && err.code == "EBADCSRFTOKEN") {
+      req.flash('error_messages', 'The form has expired. Please try again');
+      res.redirect('back');
+  } else {
+      next()
+  }
+});
+
 async function main() {
-    // landing page route
-    app.use('/', productRoutes);
+  // this is where the landing and extension runs in the webpage. without this, webpage wont load
+  // if the URL begins exactly with a forward slash
+  // use the landingRoutes
+  app.use('/', landingRoutes);
+  app.use('/products', productRoutes);
+  app.use('/users', userRoutes);
+  app.use('/cloudinary', cloudinaryRoutes);
 }
+
+// Share CSRF with hbs files
+app.use(function(req,res,next){
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 main();
 

@@ -1,5 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require('crypto');
+
+// hashing password, encrypting passwords
+const getHashedPassword = (password) => {
+    const sha256 = crypto.createHash('sha256');
+    const hash = sha256.update(password).digest('base64');
+    return hash;
+}
 
 // import in the User model
 const { User } = require('../models');
@@ -9,18 +17,19 @@ const { createRegistrationForm,createLoginForm, bootstrapField } = require('../f
 router.get('/users/register', (req,res)=>{
     // display the registration form
     const registerForm = createRegistrationForm();
-    res.render('/users/register', {
+    res.render('users/register', {
         'form': registerForm.toHTML(bootstrapField)
     })
 })
 
-router.post('/register', (req, res) => {
+router.post('/users/register', (req, res) => {
     const registerForm = createRegistrationForm();
     registerForm.handle(req, {
         success: async (form) => {
             const user = new User({
                 'username': form.data.username,
-                'password': form.data.password,
+                // this encrypts the password
+                'password': getHashedPassword(form.data.password),
                 'email': form.data.email
             });
             await user.save();
@@ -35,14 +44,14 @@ router.post('/register', (req, res) => {
     })
 })
 
-router.get('/login', (req,res)=>{
+router.get('/users/login', (req,res)=>{
     const loginForm = createLoginForm();
     res.render('users/login',{
         'form': loginForm.toHTML(bootstrapField)
     })
 })
 
-router.post('/login', async (req, res) => {
+router.post('/users/login', async (req, res) => {
     const loginForm = createLoginForm();
     loginForm.handle(req, {
         'success': async (form) => {
@@ -63,8 +72,8 @@ router.post('/login', async (req, res) => {
             } 
             // If the user is successfully retrieved, we proceed to check if the password matches
             else {
-                // check if the password matches
-                if (user.get('password') === form.data.password) {
+                // check if the password matches the hashed password
+                if (user.get('password') === getHashedPassword(form.data.password)) {
                     // add to the session that login succeed
                     // store the user details
                     req.session.user = {
@@ -91,7 +100,7 @@ router.post('/login', async (req, res) => {
 
 // Add a users/profile route
 // This route displays the details of a logged in user; we use this to test if the user authentication is working.
-router.get('/profile', (req, res) => {
+router.get('/users/profile', (req, res) => {
     // Retrieves the currently logged in user from the session. 
     // If there is none, we will redirect to the login page with an error message
     const user = req.session.user;
@@ -99,11 +108,10 @@ router.get('/profile', (req, res) => {
         req.flash('error_messages', 'You do not have permission to view this page');
         res.redirect('/users/login');
     } else {
-        res.render('/users/profile',{
+        res.render('users/profiles',{
             'user': user
         })
     }
-
 })
 
 // logout

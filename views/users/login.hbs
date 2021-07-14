@@ -1,10 +1,10 @@
 {{#extends 'base'}}
-
 {{#block 'content'}}
 <h1>Login</h1>
 <p>Please login with your account below!</p>
-
 <form method="POST">
+    {{!-- You will have to do this with each form before they will work. --}}
+     <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
 {{{form}}}
 <input type="submit" class="btn btn-primary" value="Login"/>
 </form>
