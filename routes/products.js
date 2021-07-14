@@ -12,7 +12,7 @@ const {Category}=require('../models')
 
 const {Tag} = require('../models')
 
-router.get('/', async (req,res)=>{
+router.get('/products/index', async (req,res)=>{
 
     // #2 - fetch all the products (ie, SELECT * from products)
     let products = await Product.collection().fetch({
@@ -79,7 +79,7 @@ router.post('/products/create', async(req,res)=>{
             // flash message appears after task is done
             req.flash("success_messages", `New Product ${product.get('name')} has been created`)
 
-            res.redirect('/');
+            res.redirect('/products/index');
 
         },
         'error': async (form) => {
@@ -186,7 +186,7 @@ router.post('/products/:product_id/update', async (req, res) => {
             // flash message appears after task is done
             req.flash("success_messages", ` ${product.get('name')} has been updated`)
             
-            res.redirect('/');
+            res.redirect('/products/index');
         },
         'error': async (form) => {
             res.render('products/update', {
@@ -225,7 +225,7 @@ router.post('/products/:product_id/delete', async(req,res)=>{
     // destroy function basically just destroys that product that we fetch above
     await product.destroy();
     // flash message appears after task is done
-    res.redirect('/')
+    res.redirect('/products/index')
 })
 
 module.exports = router;
