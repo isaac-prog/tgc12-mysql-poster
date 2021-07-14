@@ -6,8 +6,12 @@ const flash = require('connect-flash');
 require("dotenv").config();
 
 // import landing page
+const landingRoutes= require('./routes/landing');
 const productRoutes = require('./routes/products');
-const usersRegister = require('./routes/users')
+const userRoutes = require('./routes/users');
+// import cloudinary
+const cloudinaryRoutes = require('./routes/cloudinary.js')
+
 
 const FileStore = require('session-file-store')(session);
 
@@ -16,9 +20,6 @@ const csrf = require('csurf')
 
 // create an instance of express app
 let app = express();
-
-// import cloudinary
-const cloudinaryRoutes = require('./routes/cloudinary.js')
 
 // set the view engine
 app.set("view engine", "hbs");

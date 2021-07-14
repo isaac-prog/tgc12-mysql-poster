@@ -14,15 +14,87 @@ const {Tag} = require('../models')
 // import in the CheckIfAuthenticated middleware
 const { checkIfAuthenticated } = require('../middlewares');
 
-router.get('/products/index', async (req,res)=>{
+// router.get('/products/index', async (req,res)=>{
 
-    // #2 - fetch all the products (ie, SELECT * from products)
-    let products = await Product.collection().fetch({
-    // and load each of their category relationship:
-        withRelated:['category']
-    });
-    res.render('products/index', {
-        'products': products.toJSON() // #3 - convert collection to JSON
+//     // #2 - fetch all the products (ie, SELECT * from products)
+//     let products = await Product.collection().fetch({
+//     // and load each of their category relationship:
+//         withRelated:['category']
+//     });
+//     res.render('products/index', {
+//         'products': products.toJSON() // #3 - convert collection to JSON
+//     })
+// })
+
+router.get('/', async (req, res) => {
+  
+    // 1. get all the categories
+    const allCategories = await Category.fetchAll().map((category) => {
+        return [category.get('id'), category.get('name')];
+    })
+    // We manually add in a new category, '----', which simply represents no category selected. 
+    // The value for this option is 0. 
+    allCategories.unshift([0, '----']);
+
+    // 2. Get all the tags
+    const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+
+   // 3. Create search form 
+    let searchForm = createSearchForm(allCategories, allTags);
+    // creates a query builder that simply means "SELECT * from products". 
+    // We can continue to add clauses to a query builder until we execute it with a fetch function call. 
+    let q = Product.collection();
+
+    searchForm.handle(req, {
+        'empty': async (form) => {
+            //  fetches all the products
+            // renders the hbs file and passes it the products results and the form
+                  let products = await q.fetch({
+                withRelated: ['category']
+            })
+            res.render('products/index', {
+                'products': products.toJSON(),
+                'form': form.toHTML(bootstrapField)
+            })
+ },
+//  Display all results if there are errors
+        'error': async (form) => {
+            let products = await q.fetch({
+                withRelated: ['category']
+            })
+            res.render('products/index', {
+                'products': products.toJSON(),
+                'form': form.toHTML(bootstrapField)
+            })
+},
+        'success': async (form) => {
+            if (form.data.name) {
+                q = q.where('name', 'like', '%' + req.query.name + '%')
+            }
+
+            if (form.data.category) {
+                q = q.query('join', 'categories', 'category_id', 'categories.id')
+                  .where('categories.name', 'like', '%' + req.query.category + '%')
+            }
+
+            if (form.data.min_cost) {
+                q = q.where('cost', '>=', req.query.min_cost)
+            }
+
+            if (form.data.max_cost) {
+                q = q.where('cost', '<=', req.query.max_cost);
+            }
+
+             if (form.data.tags) {
+                q.query('join', 'products_tags', 'products.id', 'product_id')
+                .where('tag_id', 'in', form.data.tags.split(','))
+            }
+
+
+            let products = await q.fetch({
+                withRelated: ['category']
+
+        })
     })
 })
 
