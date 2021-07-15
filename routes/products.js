@@ -12,7 +12,7 @@ const {Category}=require('../models')
 // import tags (for filter)
 const {Tag} = require('../models')
 // import in the CheckIfAuthenticated middleware
-const { checkIfAuthenticated } = require('../middlewares');
+const { checkIfAuthenticated } = require('../middlewares/index');
 
 // router.get('/products/index', async (req,res)=>{
 
@@ -95,7 +95,11 @@ router.get('/', async (req, res) => {
                 withRelated: ['category']
 
         })
-    })
+        res.render('products/index', {
+            'products': products.toJSON(),
+            'form': form.toHTML(bootstrapField)
+        })
+    }
 })
 
 // create new content
@@ -314,6 +318,5 @@ router.post('/products/:product_id/delete', async(req,res)=>{
     // flash message appears after task is done
     res.redirect('/products/index')
 })
-
+})
 module.exports = router;
-
