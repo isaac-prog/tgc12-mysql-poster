@@ -174,8 +174,6 @@ const createSearchForm = (categories, tags) => {
     })
 }
 
-
-
 module.exports={
     createProductForm,
     bootstrapField,

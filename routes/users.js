@@ -14,7 +14,7 @@ const { User } = require('../models');
 
 const { createRegistrationForm,createLoginForm, bootstrapField } = require('../forms');
 
-router.get('/users/register', (req,res)=>{
+router.get('/register', (req,res)=>{
     // display the registration form
     const registerForm = createRegistrationForm();
     res.render('users/register', {
@@ -22,7 +22,7 @@ router.get('/users/register', (req,res)=>{
     })
 })
 
-router.post('/users/register', (req, res) => {
+router.post('/register', (req, res) => {
     const registerForm = createRegistrationForm();
     registerForm.handle(req, {
         success: async (form) => {
@@ -44,14 +44,14 @@ router.post('/users/register', (req, res) => {
     })
 })
 
-router.get('/users/login', (req,res)=>{
+router.get('/login', (req,res)=>{
     const loginForm = createLoginForm();
     res.render('users/login',{
         'form': loginForm.toHTML(bootstrapField)
     })
 })
 
-router.post('/users/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const loginForm = createLoginForm();
     loginForm.handle(req, {
         'success': async (form) => {
@@ -100,13 +100,13 @@ router.post('/users/login', async (req, res) => {
 
 // Add a users/profile route
 // This route displays the details of a logged in user; we use this to test if the user authentication is working.
-router.get('/users/profile', (req, res) => {
+router.get('/profile', (req, res) => {
     // Retrieves the currently logged in user from the session. 
     // If there is none, we will redirect to the login page with an error message
     const user = req.session.user;
     if (!user) {
         req.flash('error_messages', 'You do not have permission to view this page');
-        res.redirect('/users/login');
+        res.redirect('/login');
     } else {
         res.render('users/profiles',{
             'user': user
@@ -119,7 +119,7 @@ router.get('/users/profile', (req, res) => {
 router.get('/logout', (req, res) => {
     req.session.user = null;
     req.flash('success_messages', "Goodbye");
-    res.redirect('/users/login');
+    res.redirect('/login');
 })
 
 module.exports = router;
