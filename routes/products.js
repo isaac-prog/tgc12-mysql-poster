@@ -17,6 +17,9 @@ const {
     checkIfAuthenticated
 } = require('../middlewares/index');
 
+// import in the DAL
+const dataLayer = require('../dal/products')
+
 // router.get('/index', async (req,res)=>{
 
 //     // #2 - fetch all the products (ie, SELECT * from products)
@@ -32,16 +35,15 @@ const {
 router.get('/index', async (req, res) => {
 
     // 1. get all the categories
-    const allCategories = await Category.fetchAll().map((category) => {
-        return [category.get('id'), category.get('name')];
-    })
+    // all these datalayer is imported from dal/products.js so that the codes dont need to keep repeatedly typed for every new file
+    const allCategories = await dataLayer.getAllCategories();
     
     // We manually add in a new category, '----', which simply represents no category selected. 
     // The value for this option is 0. 
     allCategories.unshift([0, '----']);
 
     // 2. Get all the tags
-    const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+    const allTags = await dataLayer.getAllTags();
 
     // 3. Create search form 
     let searchForm = createSearchForm(allCategories, allTags);
@@ -188,12 +190,7 @@ router.post('/create', checkIfAuthenticated, async (req, res) => {
 router.get('/:product_id/update', async (req, res) => {
     // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
     const productId = req.params.product_id
-    const product = await Product.where({
-        'id': productId
-    }).fetch({
-        require: true,
-        withRelated: ['tags']
-    });
+    const product = await dataLayer.getProductByID(productId);
 
     // fetch all the categories in the system and use that to populate the forms.
     const allCategories = await Category.fetchAll().map((category) => {
@@ -286,7 +283,7 @@ router.post('/:product_id/update', async (req, res) => {
             // flash message appears after task is done
             req.flash("success_messages", ` ${product.get('name')} has been updated`)
 
-            res.redirect('/index');
+            res.redirect('/products/index');
         },
         'error': async (form) => {
             res.render('products/update', {

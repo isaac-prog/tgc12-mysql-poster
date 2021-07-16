@@ -9,10 +9,10 @@ require("dotenv").config();
 const landingRoutes= require('./routes/landing');
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
+const cartRoutes = require('./routes/shoppingCart');
+const checkout = require('./routes/checkout')
 // import cloudinary
 const cloudinaryRoutes = require('./routes/cloudinary.js')
-
-
 const FileStore = require('session-file-store')(session);
 
 // import csurf (this is to prevent csrx attacks)
@@ -45,7 +45,6 @@ app.use(session({
   'resave': false, // we will not resave the session if there are no changes
   'saveUninitialized': true // if a client connects with no session, immediately create one
 }));
-
 
 app.use(flash())
 
@@ -83,6 +82,8 @@ async function main() {
   app.use('/products', productRoutes);
   app.use('/users', userRoutes);
   app.use('/cloudinary', cloudinaryRoutes);
+  app.use('/cart', cartRoutes);
+  app.use('/checkout', checkout);
 }
 
 // Share CSRF with hbs files

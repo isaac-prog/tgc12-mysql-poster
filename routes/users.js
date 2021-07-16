@@ -119,7 +119,7 @@ router.get('/profile', (req, res) => {
 router.get('/logout', (req, res) => {
     req.session.user = null;
     req.flash('success_messages', "Goodbye");
-    res.redirect('/login');
+    res.redirect('/users/login');
 })
 
 module.exports = router;
