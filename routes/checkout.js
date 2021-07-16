@@ -3,7 +3,7 @@ const router = express.Router();
 
 const CartServices = require('../services/cart_services')
 // stripe secret key taken from .env
-const Stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const Stripe = require('stripe')(process.env.STRIPE_KEY_SECRET)
 
 router.get('/', async (req, res) => {
     const cart = new CartServices(req.session.user.id);
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     let stripeSession = await Stripe.checkout.sessions.create(payment)
     res.render('checkout/checkout', {
         'sessionId': stripeSession.id, // 4. Get the ID of the session
-        'publishableKey': process.env.STRIPE_PUBLISHABLE_KEY
+        'publishableKey': process.env.STRIPE_KEY_PUBLISHABLE
     })
 
 
