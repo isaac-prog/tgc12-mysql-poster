@@ -20,7 +20,11 @@ const getProductByID = async (productId) => {
     });
 }
 
+const getAllProducts = async () => {
+    return await Product.fetchAll();
+}
+
 module.exports = {
-    getAllCategories, getAllTags, getProductByID
+    getAllCategories, getAllTags, getProductByID, getAllProducts
 }
 

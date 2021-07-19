@@ -14,9 +14,12 @@ const checkout = require('./routes/checkout')
 // import cloudinary
 const cloudinaryRoutes = require('./routes/cloudinary.js')
 const FileStore = require('session-file-store')(session);
-
 // import csurf (this is to prevent csrx attacks)
 const csrf = require('csurf')
+// import api
+const api = {
+  products: require('./routes/api/products')
+}
 
 // create an instance of express app
 let app = express();
@@ -24,12 +27,12 @@ let app = express();
 // set the view engine
 app.set("view engine", "hbs");
 
-// static folder
-app.use(express.static("public"));
-
 // setup wax-on
 wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
+
+// static folder
+app.use(express.static("public"));
 
 // enable forms
 app.use(
@@ -62,7 +65,14 @@ app.use(function(req,res,next){
 })
 
 // enable CSRF
-app.use(csrf());
+const csurfInstance = csrf();
+app.use(function (req, res, next) {
+  // exclude /checkout/process_payment for CSRF
+  if (req.url === '/checkout/process_payment') {
+      return next()
+  }
+  csurfInstance(req, res, next)
+})
 
 // !!!###this must be immediately after the app.use(csrf()).###!!!
 app.use(function (err, req, res, next) {
@@ -74,6 +84,14 @@ app.use(function (err, req, res, next) {
   }
 });
 
+// Share CSRF with hbs files
+app.use(function(req,res,next){
+  if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();
+}
+  next();
+})
+
 async function main() {
   // this is where the landing and extension runs in the webpage. without this, webpage wont load
   // if the URL begins exactly with a forward slash
@@ -84,13 +102,8 @@ async function main() {
   app.use('/cloudinary', cloudinaryRoutes);
   app.use('/cart', cartRoutes);
   app.use('/checkout', checkout);
+  app.use('/api/products', api.products);
 }
-
-// Share CSRF with hbs files
-app.use(function(req,res,next){
-  res.locals.csrfToken = req.csrfToken();
-  next();
-})
 
 main();
 
