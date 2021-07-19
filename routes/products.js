@@ -187,7 +187,7 @@ router.post('/create', checkIfAuthenticated, async (req, res) => {
 
 // Updating the form
 // this router is the get the infromation that is to be updated
-router.get('/:product_id/update', async (req, res) => {
+router.get('/:product_id/update',checkIfAuthenticated, async (req, res) => {
     // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
     const productId = req.params.product_id
     const product = await dataLayer.getProductByID(productId);
@@ -238,7 +238,7 @@ router.get('/:product_id/update', async (req, res) => {
 // this router is to push the updated information into the database
 
 // we fetch the product by the product id from the URL parameters
-router.post('/:product_id/update', async (req, res) => {
+router.post('/:product_id/update',checkIfAuthenticated, async (req, res) => {
     // fetch all the categories
     const allCategories = await Category.fetchAll().map((category) => {
         return [category.get('id'), category.get('name')];
@@ -297,7 +297,7 @@ router.post('/:product_id/update', async (req, res) => {
 })
 
 // Deleting a form
-router.get('/:product_id/delete', async (req, res) => {
+router.get('/:product_id/delete',checkIfAuthenticated, async (req, res) => {
     // fetch the product that we want to delete
     const product = await Product.where({
         'id': req.params.product_id
@@ -311,7 +311,7 @@ router.get('/:product_id/delete', async (req, res) => {
 });
 
 // process delete:
-router.post('/:product_id/delete', async (req, res) => {
+router.post('/:product_id/delete',checkIfAuthenticated, async (req, res) => {
 // fetch the product that we want to delete
 const product = await Product.where({
     'id': req.params.product_id

@@ -40,7 +40,11 @@
                     {{this.description}}
                 </td>
                 <td>
-                    {{this.image_url}}
+                    {{#if product.image_url}}
+                    <img src="{{product.image_url}}" id="uploaded_image" />
+                    {{else}}
+                    <img src="" style="display:none" id="uploaded_image" />
+                    {{/if}}
                 </td>
                 <td>
                 <a href="/cart/{{this.id}}/add" class="btn btn-success btn-sm">Add to cart</a>
