@@ -13,9 +13,7 @@ const {
 const { Product, Category, Tag } = require('../models');
 
 // import in the CheckIfAuthenticated middleware
-const {
-    checkIfAuthenticated
-} = require('../middlewares/index');
+const {checkIfAuthenticated} = require('../middlewares/index');
 
 // import in the DAL
 const dataLayer = require('../dal/products')
@@ -98,13 +96,60 @@ router.get('/index', async (req, res) => {
 
             let products = await q.fetch({
                 withRelated: ['category']
-
             })
             res.render('products/index', {
                 'products': products.toJSON(),
                 'form': form.toHTML(bootstrapField)
             })
         }
+    })
+})
+
+router.get('/:product_id', async(req,res)=>{
+    // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
+    const productId = req.params.product_id
+    const product = await dataLayer.getProductByID(productId);
+
+    // fetch all the categories in the system and use that to populate the forms.
+    const allCategories = await Category.fetchAll().map((category) => {
+        return [category.get('id'), category.get('name')];
+    })
+
+    // fetch all the tags
+    // displaying all the possible tags in the form
+    const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+
+    const productForm = createProductForm(allCategories, allTags);
+
+    // fill in the existing values: 
+    // we once again create a productForm. 
+    // However this time round we assign the value of each field from its corresponding key in the product model instance.  
+    productForm.fields.name.value = product.get('name');
+    productForm.fields.cost.value = product.get('cost');
+    productForm.fields.description.value = product.get('description');
+
+    // set the initial value fo the category_id field of the form:
+    // sets the form's category_id field value to be the same as the category_id from the product. 
+    // When the form is displayed, the correct category will be selected by default.
+    productForm.fields.category_id.value = product.get('category_id');
+
+    // set the image url in the product form
+    productForm.fields.image_url.value = product.get('image_url');
+
+    // fill in the multi-select for the tags
+    // read the current tags of the product and set them as the value of the tags field of the form.
+    // This will set the default values of the tags multi-select to the current tags of the product.
+
+    let selectedTags = await product.related('tags').pluck('id');
+    productForm.fields.tags.value = selectedTags;
+
+    res.render('products/views', {
+        'form': productForm.toHTML(bootstrapField),
+        'product': product.toJSON(),
+        // send to the HBS file the cloudinary information
+        cloudinaryName: process.env.CLOUDINARY_NAME,
+        cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+        cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
     })
 })
 
@@ -115,9 +160,7 @@ router.get('/create', checkIfAuthenticated, async (req, res) => {
     const allCategories = await Category.fetchAll().map((category) => {
         return [category.get('id'), category.get('name')];
     })
-
     const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
-
     const productForm = createProductForm(allCategories, allTags);
 
     //    create have access to bootstrap and cloudinary
@@ -304,7 +347,6 @@ router.get('/:product_id/delete',checkIfAuthenticated, async (req, res) => {
     }).fetch({
         require: true
     });
-
     res.render('products/delete', {
         'product': product.toJSON()
     })

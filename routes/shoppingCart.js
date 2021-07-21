@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
 const CartServices = require('../services/cart_services');
+const {checkIfAuthenticated} = require('../middlewares/index');
 
 router.get('/', async(req,res)=>{
     let cart = new CartServices(req.session.user.id);
@@ -10,7 +10,7 @@ router.get('/', async(req,res)=>{
     })
 })
 
-router.get('/:product_id/add', async (req,res)=>{
+router.get('/:product_id/add',checkIfAuthenticated, async (req,res)=>{
     let cart = new CartServices(req.session.user.id);
     await cart.addToCart(req.params.product_id, 1);
     req.flash('success_messages', 'Yay! Successfully added to cart')

@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 // middleware protect a route from public access
 const checkIfAuthenticated = (req, res, next) => {
     if (req.session.user) {
@@ -11,7 +13,28 @@ const checkIfAuthenticated = (req, res, next) => {
     }
 }
 
+// this is for the one time token that expires in 1h (routes/api/users/js
+const checkIfAuthenticatedJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+};
+
 module.exports = {
-    checkIfAuthenticated
+    checkIfAuthenticated,
+    checkIfAuthenticatedJWT
 }
 

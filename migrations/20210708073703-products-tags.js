@@ -46,9 +46,9 @@ exports.up = function (db) {
   });
 };
 
-
-
-
+exports.down = function(db) {
+  return db.dropTable('products_tags');
+};
 
 
 exports._meta = {

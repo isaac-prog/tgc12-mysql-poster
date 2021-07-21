@@ -15,14 +15,15 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.addColumn('products', 'image_url', {
-    type:'string',
-    length:255
-});;
+  return db.createTable('blacklisted_tokens', {
+       id: {type:'bigint', primaryKey:true, autoIncrement:true},
+       token: { type: 'string', length:5000},
+       date_created : {type:'date'}
+  })
 };
 
 exports.down = function(db) {
-  return db.dropColumn('products','image_url');
+  return db.dropTable('blacklisted_tokens');
 };
 
 exports._meta = {

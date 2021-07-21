@@ -65,13 +65,13 @@ app.use(function(req,res,next){
 })
 
 // enable CSRF
-const csurfInstance = csrf();
+const csrfInstance = csrf();
 app.use(function (req, res, next) {
   // exclude /checkout/process_payment for CSRF
-  if (req.url === '/checkout/process_payment') {
+  if (req.url === '/checkout/process_payment'|| req.url.slice(0,5)=="/api/") {
       return next()
   }
-  csurfInstance(req, res, next)
+  csrfInstance(req, res, next)
 })
 
 // !!!###this must be immediately after the app.use(csrf()).###!!!
@@ -102,7 +102,7 @@ async function main() {
   app.use('/cloudinary', cloudinaryRoutes);
   app.use('/cart', cartRoutes);
   app.use('/checkout', checkout);
-  app.use('/api/products', api.products);
+  app.use('/api/products', express.json(), api.products);
 }
 
 main();
