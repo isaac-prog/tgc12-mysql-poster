@@ -9,7 +9,7 @@
         <h4>{{this.products.name}}</h3>
             <h5>Category: {{this.products.category.name}}</h5>
             <h5>Cost: {{this.products.cost}} </h5>        
-            <h5>Quantity: {{this.quantity}}</h5>  
+            <h5>Quantity: {{this.quantity}}</h5>
             <form method="POST" action="/cart/{{this.id}}/quantity/update">
                 <input type="hidden" value="{{../csrfToken}}" name="_csrf"/> 
                 <h5>
@@ -20,15 +20,12 @@
             <div>
                 <a href="/cart/{{this.products.id}}/remove" class="btn btn-danger">Remove</a>
             </div>
-            <div>
-                 <a href="/checkout" class="btn btn-success">Checkout</a>
-            </div>
-
     </li>
     {{/each}}
 </ul>
-
-
+<div>
+                 <a href="/checkout" class="btn btn-success">Checkout</a>
+            </div>
 {{/block}}
 
 {{/extends}}

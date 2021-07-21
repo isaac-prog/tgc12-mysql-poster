@@ -2,20 +2,35 @@
 
 {{#block 'content'}}
 <h1>{{product.name}}</h1>
-<form method="POST">
-    {{!-- this is needed for every new form --}}
-    <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
-    {{{form}}}
    <!-- 1. shows the image if exists -->
     <div>     
-        {{#if product.image_url}}
-        <img src="{{product.image_url}}" id="uploaded_image" />
-        {{else}}
-        <img src="" style="display:none" id="uploaded_image" />
-        {{/if}}
+<tbody>
+            <tr>
+                <td>
+                    {{product.name}}
+                </td>
+                <td>
+                {{product.category.name}}
+                </td>
+                <td>
+                    {{product.cost}}
+                </td>
+                <td>
+                    {{product.description}}
+                </td>
+                <td>
+                    {{#if product.image_url}}
+                    <img src="{{product.image_url}}" id="uploaded_image" />
+                    {{else}}
+                    <img src="" style="display:none" id="uploaded_image" />
+                    {{/if}}
+                </td>
+                <td>
+                <a href="/cart/{{product.id}}/add" class="btn btn-success btn-sm">Add to cart</a>
+            </td>
+            </tr>
+    </tbody>
     </div>
-    <input type="submit" value="Update Product" class="btn btn-primary" />
-</form>
 {{/block}}
 {{/extends}}
 
@@ -46,7 +61,6 @@
             console.log('Done! Here is the image info: ', result.info);
             // hide the upload widget 
             document.querySelector('#upload_widget').style.display = "none";
-
             // display the image
             document.querySelector('#id_image_url').value = result.info.url;
             document.querySelector('#uploaded_image').src = result.info.url;

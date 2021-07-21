@@ -6,7 +6,7 @@ const router = express.Router();
 const {
     bootstrapField,
     createProductForm,
-    createSearchForm
+    createSearchForm,
 } = require('../forms');
 
 // import product from product models, category (grouping products) & tags (for filter)
@@ -105,7 +105,7 @@ router.get('/index', async (req, res) => {
     })
 })
 
-router.get('/:product_id', async(req,res)=>{
+router.get('/:product_id/views', async(req,res)=>{
     // retrieve the product: We retrieve the product instance with that specific product id and store it in the product variable.
     const productId = req.params.product_id
     const product = await dataLayer.getProductByID(productId);
@@ -118,7 +118,6 @@ router.get('/:product_id', async(req,res)=>{
     // fetch all the tags
     // displaying all the possible tags in the form
     const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
-
     const productForm = createProductForm(allCategories, allTags);
 
     // fill in the existing values: 
@@ -199,7 +198,6 @@ router.post('/create', checkIfAuthenticated, async (req, res) => {
             // we pass all the data in the form to the product via the constructor. 
             // For this to work, the name of fields in the form must match the name of all columns in the table.
             const product = new Product(productData);
-
             product.set('name', form.data.name);
             product.set('cost', form.data.cost);
             product.set('description', form.data.description);
@@ -211,10 +209,8 @@ router.post('/create', checkIfAuthenticated, async (req, res) => {
             if (tags) {
                 await product.tags().attach(tags.split(","));
             }
-
             // flash message appears after task is done
             req.flash("success_messages", `New Product ${product.get('name')} has been created`)
-
             res.redirect('/products/index');
 
         },

@@ -174,10 +174,11 @@ const createSearchForm = (categories, tags) => {
     })
 }
 
+
 module.exports={
     createProductForm,
     bootstrapField,
     createRegistrationForm,
     createLoginForm,
-    createSearchForm
+    createSearchForm,
 }

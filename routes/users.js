@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
             if (!user) {
                 req.flash("error_messages", "Sorry, the authentication details you provided does not work.")
                 res.redirect('/users/login');
-            } 
+            }
             // If the user is successfully retrieved, we proceed to check if the password matches
             else {
                 // check if the password matches the hashed password
